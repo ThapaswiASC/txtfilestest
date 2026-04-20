@@ -1,0 +1,476 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Youth Account Fund Management — Wireframe</title>
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    :root {
+      --w-bg:      #f2f2f2;
+      --w-surface: #e8e8e8;
+      --w-block:   #d4d4d4;
+      --w-dark:    #b0b0b0;
+      --w-border:  #999999;
+      --w-stroke:  #777777;
+      --w-text:    #444444;
+      --w-label:   #888888;
+      --w-active:  #555555;
+    }
+    html, body { height: 100%; font-family: 'Courier New', Courier, monospace; background: var(--w-bg); color: var(--w-text); font-size: 12px; }
+    #app     { display: flex; height: 100vh; overflow: hidden; }
+    #sidebar { width: 240px; flex-shrink: 0; background: var(--w-surface); border-right: 2px solid var(--w-border); display: flex; flex-direction: column; overflow-y: auto; }
+    #main    { flex: 1; display: flex; flex-direction: column; overflow: hidden; }
+    #topbar  { height: 52px; flex-shrink: 0; background: var(--w-surface); border-bottom: 2px solid var(--w-border); display: flex; align-items: center; padding: 0 20px; gap: 12px; justify-content: space-between; }
+    #content { flex: 1; overflow-y: auto; background: var(--w-bg); }
+    .sb-logo     { padding: 16px 18px; border-bottom: 1px dashed var(--w-border); }
+    .sb-logo-box { background: var(--w-block); border: 1px solid var(--w-border); height: 28px; display: flex; align-items: center; padding: 0 10px; font-size: 13px; color: var(--w-text); }
+    .sb-section  { padding: 12px 18px 4px; font-size: 9px; letter-spacing: .15em; text-transform: uppercase; color: var(--w-label); border-bottom: 1px dashed var(--w-dark); }
+    .nav-link    { display: flex; align-items: center; gap: 8px; padding: 8px 18px; cursor: pointer; font-size: 11px; color: var(--w-label); border-left: 3px solid transparent; }
+    .nav-link:hover   { background: var(--w-block); color: var(--w-text); }
+    .nav-link.active  { border-left-color: var(--w-stroke); background: var(--w-block); color: var(--w-text); font-weight: bold; }
+    .sb-footer   { margin-top: auto; padding: 12px 18px; border-top: 1px dashed var(--w-border); display: flex; flex-direction: column; gap: 5px; font-size: 10px; color: var(--w-label); }
+    .sb-fline    { height: 8px; background: var(--w-block); border: 1px solid var(--w-border); }
+    .search-wf    { flex: 1; max-width: 320px; height: 30px; background: var(--w-block); border: 1px dashed var(--w-border); display: flex; align-items: center; padding: 0 10px; font-size: 10px; color: var(--w-label); }
+    .topbar-right { display: flex; align-items: center; gap: 10px; }
+    .notif-wf     { height: 28px; width: 90px; background: var(--w-block); border: 1px solid var(--w-border); display: flex; align-items: center; justify-content: center; font-size: 10px; color: var(--w-label); }
+    .avatar-wf    { width: 28px; height: 28px; border-radius: 50%; background: var(--w-dark); border: 1px solid var(--w-border); display: flex; align-items: center; justify-content: center; font-size: 9px; color: var(--w-surface); }
+    .topbar-name  { height: 12px; width: 90px; background: var(--w-block); border: 1px solid var(--w-border); }
+    .page        { display: none; padding: 24px 28px; }
+    .page.active { display: block; }
+    .ph       { display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 20px; }
+    .ph-title { height: 22px; width: 260px; background: var(--w-block); border: 1px solid var(--w-border); margin-bottom: 6px; display: flex; align-items: center; justify-content: center; font-weight: bold; }
+    .ph-sub   { height: 10px; width: 300px; background: var(--w-surface); border: 1px dashed var(--w-border); }
+    .bc-wf    { height: 8px; width: 180px; background: var(--w-surface); border: 1px dashed var(--w-border); margin-bottom: 10px; }
+    .g2 { display: grid; grid-template-columns: repeat(2,minmax(0,1fr)); gap: 14px; margin-bottom: 14px; }
+    @media (max-width: 860px) { .g2 { grid-template-columns: 1fr; } }
+    .card       { background: var(--w-surface); border: 1px solid var(--w-border); padding: 14px 16px; margin-bottom: 14px; }
+    .card-title { height: 9px; width: 120px; background: var(--w-dark); border: 1px solid var(--w-border); margin-bottom: 12px; }
+    .stat      { background: var(--w-surface); border: 1px solid var(--w-border); padding: 14px 16px; }
+    .s-label   { height: 8px; width: 100px; background: var(--w-dark); border: 1px solid var(--w-border); margin-bottom: 10px; }
+    .s-val     { height: 30px; width: 80px; background: var(--w-block); border: 1px solid var(--w-border); margin-bottom: 6px; }
+    .s-sub     { height: 8px; width: 130px; background: var(--w-surface); border: 1px dashed var(--w-border); }
+    .ln    { height: 10px; background: var(--w-block); border: 1px solid var(--w-border); margin-bottom: 6px; }
+    .lnsm  { height: 8px; background: var(--w-surface); border: 1px dashed var(--w-border); margin-bottom: 5px; }
+    .w100  { width:100%; } .w80 { width:80%; } .w60 { width:60%; } .w40 { width:40%; } .w30 { width:30%; }
+    .wf-row { display: flex; justify-content: space-between; align-items: center; padding: 8px 0; border-bottom: 1px dashed var(--w-border); }
+    .wf-row:last-child { border-bottom: none; }
+    .row-l  { display: flex; flex-direction: column; gap: 4px; flex: 1; }
+    .btn  { display: inline-flex; align-items: center; justify-content: center; height: 30px; min-width: 80px; background: var(--w-block); border: 1.5px solid var(--w-stroke); cursor: pointer; font-size: 10px; color: var(--w-text); font-family: inherit; padding: 0 14px; white-space: nowrap; margin-right: 8px; }
+    .btn:hover   { background: var(--w-dark); }
+    .btn.filled  { background: var(--w-active); color: var(--w-surface); border-color: var(--w-stroke); }
+    .btn.sm      { height: 24px; min-width: 50px; font-size: 9px; padding: 0 8px; }
+    .btn-grp     { display: flex; gap: 8px; flex-wrap: wrap; }
+    .tag  { display: inline-block; height: 16px; width: 55px; background: var(--w-block); border: 1px solid var(--w-border); vertical-align: middle; }
+    .tagw { width: 100px; }
+    .inp  { width: 100%; height: 30px; background: var(--w-block); border: 1px dashed var(--w-border); margin-bottom: 4px; }
+    .txa  { width: 100%; height: 70px; background: var(--w-block); border: 1px dashed var(--w-border); margin-bottom: 4px; }
+    .lbl  { height: 8px; width: 80px; background: var(--w-dark); border: 1px solid var(--w-border); margin-bottom: 5px; }
+    .fgrp { margin-bottom: 12px; }
+    .tab-bar { display: flex; border-bottom: 2px solid var(--w-border); margin-bottom: 14px; gap: 2px; }
+    .tab     { height: 32px; min-width: 90px; background: var(--w-surface); border: 1px solid var(--w-border); border-bottom: none; display: flex; align-items: center; justify-content: center; cursor: pointer; font-size: 10px; color: var(--w-label); padding: 0 14px; }
+    .tab:hover   { background: var(--w-block); }
+    .tab.active  { background: var(--w-block); color: var(--w-text); font-weight: bold; border-bottom: 2px solid var(--w-surface); }
+    .steps { display: flex; margin-bottom: 20px; }
+    .step  { flex: 1; height: 32px; background: var(--w-surface); border: 1px solid var(--w-border); border-right: none; display: flex; align-items: center; justify-content: center; font-size: 10px; color: var(--w-label); }
+    .step:last-child { border-right: 1px solid var(--w-border); }
+    .step.active { background: var(--w-active); color: var(--w-surface); font-weight: bold; }
+    .step.done   { background: var(--w-block);  color: var(--w-text);    font-weight: bold; }
+    .msg-bub { background: var(--w-block); border: 1px solid var(--w-border); padding: 12px 14px; margin-bottom: 12px; }
+    .ok-wrap  { text-align: center; padding: 36px 24px; max-width: 440px; margin: 0 auto; }
+    .ok-ring  { width: 52px; height: 52px; border: 2px solid var(--w-stroke); border-radius: 50%; display: flex; align-items: center; justify-content: center; margin: 0 auto 16px; font-size: 22px; color: var(--w-stroke); }
+    .cbox     { background: var(--w-bg); border: 1px dashed var(--w-border); padding: 14px 16px; margin-bottom: 12px; }
+    .divider  { border: none; border-top: 1px dashed var(--w-border); margin: 12px 0; }
+    .err-msg  { color: #a00; background: #fff4f4; border: 1px solid #a00; padding: 6px 10px; margin-bottom: 10px; font-size: 11px; }
+    .info-msg { color: #555; background: #f8f8ff; border: 1px solid #999; padding: 6px 10px; margin-bottom: 10px; font-size: 11px; }
+    .filter-row { display: flex; gap: 10px; margin-bottom: 10px; }
+    .modal { position: fixed; z-index: 100; left: 0; top: 0; width: 100vw; height: 100vh; background: rgba(240,240,240,0.7); display: none; align-items: center; justify-content: center; }
+    .modal-content { background: #fff; border: 2px solid #999; min-width: 340px; max-width: 90vw; padding: 32px 38px; }
+    .modal.active { display: flex; }
+  </style>
+</head>
+<body>
+<div id="app">
+  <!-- SIDEBAR -->
+  <aside id="sidebar">
+    <div class="sb-logo">
+      <div class="sb-logo-box">[ LOGO — Youth Fund ]</div>
+    </div>
+    <div class="sb-section">Main</div>
+    <div class="nav-link active" onclick="show('login',this)">1. Login</div>
+    <div class="nav-link" onclick="show('dashboard',this)">2. Main Dashboard</div>
+    <div class="nav-link" onclick="show('accounts',this)">3. Accounts Overview</div>
+    <div class="nav-link" onclick="show('select-youth',this)">4. Select Youth Account</div>
+    <div class="nav-link" onclick="show('youth-dashboard',this)">5. Youth Dashboard</div>
+    <div class="nav-link" onclick="show('setup-prompt',this)">6. Youth Account Setup</div>
+    <div class="sb-section">Actions</div>
+    <div class="nav-link" onclick="show('add-funds',this)">7. Add Funds</div>
+    <div class="nav-link" onclick="show('confirm-transfer',this)">8. Confirm Transfer</div>
+    <div class="nav-link" onclick="show('success-transfer',this)">9. Transfer Success</div>
+    <div class="nav-link" onclick="show('funds-error',this)">10. Insufficient Funds</div>
+    <div class="nav-link" onclick="show('validation-error',this)">11. Validation Error</div>
+    <div class="nav-link" onclick="show('set-limit',this)">12. Set Spending Limit</div>
+    <div class="nav-link" onclick="show('confirm-limit',this)">13. Confirm Limit</div>
+    <div class="nav-link" onclick="show('limit-error',this)">14. Limit Error</div>
+    <div class="sb-section">Activity</div>
+    <div class="nav-link" onclick="show('activity',this)">15. View Activity</div>
+    <div class="nav-link" onclick="show('activity-filter',this)">16. Filter Activity</div>
+    <div class="sb-section">Notifications</div>
+    <div class="nav-link" onclick="show('notification',this)">17. Notification</div>
+    <div class="sb-section">Edge Cases</div>
+    <div class="nav-link" onclick="show('conflict',this)">18. Concurrent Access</div>
+    <div class="sb-footer">
+      Youth Account v1.0<br>
+      WCAG AA · Scalable Design<br>
+      © 2024 YouthFund Inc.
+    </div>
+  </aside>
+  <!-- MAIN -->
+  <div id="main">
+    <div id="topbar">
+      <div class="search-wf">[ Search box ________________________ ]</div>
+      <div class="topbar-right">
+        <div class="notif-wf">[ Notification ]</div>
+        <div class="avatar-wf">PG</div>
+        <div class="topbar-name">[ Profile ]</div>
+      </div>
+    </div>
+    <div id="content">
+      <!-- 1.0 Login Screen -->
+      <div class="page active" id="login">
+        <div class="ph">
+          <div class="ph-title">[ Login to Parent Account ]</div>
+        </div>
+        <div class="card">
+          <div class="fgrp">
+            <div class="lbl">[ Username ]</div>
+            <input class="inp" type="text" placeholder="[ Enter username ]">
+          </div>
+          <div class="fgrp">
+            <div class="lbl">[ Password ]</div>
+            <input class="inp" type="password" placeholder="[ Enter password ]">
+          </div>
+          <div class="fgrp">
+            <label><input type="checkbox"> [ Remember Me ]</label>
+          </div>
+          <div class="btn-grp">
+            <button class="btn filled" onclick="show('dashboard')">[ Login ]</button>
+            <button class="btn">[ Use Biometric ]</button>
+          </div>
+        </div>
+        <div class="info-msg">[ Option: Biometric login available if device supports ]</div>
+      </div>
+      <!-- 2.0 Main Dashboard -->
+      <div class="page" id="dashboard">
+        <div class="ph">
+          <div class="ph-title">[ Main Dashboard ]</div>
+        </div>
+        <div class="g2">
+          <div class="card">
+            <div class="card-title">[ Parent Account Balance ]</div>
+            <div class="s-val">[ $X,XXX.XX ]</div>
+            <div class="btn-grp">
+              <button class="btn" onclick="show('accounts')">[ View All Accounts ]</button>
+            </div>
+          </div>
+          <div class="card">
+            <div class="card-title">[ Youth Account Summary ]</div>
+            <div class="s-val">[ $XXX.XX ]</div>
+            <div class="btn-grp">
+              <button class="btn filled" onclick="show('youth-dashboard')">[ Go to Youth Dashboard ]</button>
+            </div>
+          </div>
+        </div>
+      </div>
+      <!-- 3.0 Accounts Overview -->
+      <div class="page" id="accounts">
+        <div class="ph">
+          <div class="ph-title">[ Accounts Overview ]</div>
+        </div>
+        <div class="card">
+          <div class="card-title">[ All Linked Accounts ]</div>
+          <div class="wf-row">
+            <div>[ Parent Checking ]</div>
+            <button class="btn sm">[ View ]</button>
+          </div>
+          <div class="wf-row">
+            <div>[ Youth Account ]</div>
+            <button class="btn sm filled" onclick="show('select-youth')">[ Select ]</button>
+          </div>
+          <div class="wf-row">
+            <div>[ Add New Account ]</div>
+            <button class="btn sm" onclick="show('setup-prompt')">[ Add ]</button>
+          </div>
+        </div>
+      </div>
+      <!-- 4.0 Select Youth Account -->
+      <div class="page" id="select-youth">
+        <div class="ph">
+          <div class="ph-title">[ Select Youth Account ]</div>
+        </div>
+        <div class="card">
+          <div class="card-title">[ Youth Account: John Doe ]</div>
+          <div class="btn-grp">
+            <button class="btn filled" onclick="show('youth-dashboard')">[ Open Youth Dashboard ]</button>
+          </div>
+        </div>
+      </div>
+      <!-- 5.0 Youth Dashboard -->
+      <div class="page" id="youth-dashboard">
+        <div class="ph">
+          <div class="ph-title">[ Youth Account Dashboard ]</div>
+        </div>
+        <div class="g2">
+          <div class="card">
+            <div class="card-title">[ Balance ]</div>
+            <div class="s-val">[ $XXX.XX ]</div>
+            <div class="btn-grp">
+              <button class="btn" onclick="show('add-funds')">[ Add Funds ]</button>
+            </div>
+          </div>
+          <div class="card">
+            <div class="card-title">[ Weekly Spending Limit ]</div>
+            <div class="s-val">[ $XX.XX ]</div>
+            <div class="btn-grp">
+              <button class="btn" onclick="show('set-limit')">[ Set/Update Limit ]</button>
+            </div>
+          </div>
+        </div>
+        <div class="card">
+          <div class="card-title">[ Recent Activity ]</div>
+          <div class="wf-row">
+            <div>[ Transaction List ]</div>
+            <button class="btn sm" onclick="show('activity')">[ View All ]</button>
+          </div>
+        </div>
+      </div>
+      <!-- 6.0 Youth Account Setup Prompt -->
+      <div class="page" id="setup-prompt">
+        <div class="ph">
+          <div class="ph-title">[ Youth Account Setup ]</div>
+        </div>
+        <div class="card">
+          <div class="card-title">[ Benefits of Youth Account ]</div>
+          <div class="ln w80"></div>
+          <div class="ln w80"></div>
+          <div class="btn-grp">
+            <button class="btn filled">[ Start Setup ]</button>
+          </div>
+        </div>
+      </div>
+      <!-- 7.0 Add Funds -->
+      <div class="page" id="add-funds">
+        <div class="ph">
+          <div class="ph-title">[ Add Funds to Youth Account ]</div>
+        </div>
+        <div class="card">
+          <div class="fgrp">
+            <div class="lbl">[ Source Account ]</div>
+            <select class="inp"><option>[ Parent Checking ]</option></select>
+          </div>
+          <div class="fgrp">
+            <div class="lbl">[ Amount ]</div>
+            <input class="inp" type="number" placeholder="[ Enter amount ]">
+          </div>
+          <div class="btn-grp">
+            <button class="btn filled" onclick="show('confirm-transfer')">[ Continue ]</button>
+            <button class="btn" onclick="show('youth-dashboard')">[ Cancel ]</button>
+          </div>
+        </div>
+        <div class="info-msg">[ Suggestion: Typical transfer $10, $20, $50 ]</div>
+      </div>
+      <!-- 8.0 Confirm Transfer -->
+      <div class="page" id="confirm-transfer">
+        <div class="ph">
+          <div class="ph-title">[ Confirm Transfer ]</div>
+        </div>
+        <div class="card">
+          <div class="ln w60"></div>
+          <div class="ln w40"></div>
+          <div class="wf-row">
+            <div>[ Transfer $XX.XX from Parent to Youth ]</div>
+          </div>
+          <div class="btn-grp">
+            <button class="btn filled" onclick="show('success-transfer')">[ Confirm ]</button>
+            <button class="btn" onclick="show('add-funds')">[ Back ]</button>
+          </div>
+        </div>
+      </div>
+      <!-- 9.0 Success Transfer -->
+      <div class="page" id="success-transfer">
+        <div class="ok-wrap">
+          <div class="ok-ring">✓</div>
+          <div>[ Transfer Complete! ]</div>
+          <div class="ln w60"></div>
+          <div>[ New Youth Account Balance: $XXX.XX ]</div>
+          <div class="btn-grp" style="margin-top:18px;">
+            <button class="btn filled" onclick="show('youth-dashboard')">[ Done ]</button>
+            <button class="btn" onclick="show('add-funds')">[ Transfer Again ]</button>
+          </div>
+        </div>
+      </div>
+      <!-- 10.0 Insufficient Funds Error -->
+      <div class="page" id="funds-error">
+        <div class="ph">
+          <div class="ph-title">[ Insufficient Funds Error ]</div>
+        </div>
+        <div class="card">
+          <div class="err-msg">[ Error: Insufficient balance. Please enter a lower amount or fund your account. ]</div>
+          <div class="btn-grp">
+            <button class="btn" onclick="show('add-funds')">[ Try Again ]</button>
+            <button class="btn" onclick="show('dashboard')">[ Cancel ]</button>
+          </div>
+        </div>
+      </div>
+      <!-- 11.0 Validation Error -->
+      <div class="page" id="validation-error">
+        <div class="ph">
+          <div class="ph-title">[ Invalid Transfer Amount ]</div>
+        </div>
+        <div class="card">
+          <div class="err-msg">[ Error: Please enter a positive amount greater than zero. ]</div>
+          <div class="btn-grp">
+            <button class="btn" onclick="show('add-funds')">[ Fix Amount ]</button>
+          </div>
+        </div>
+      </div>
+      <!-- 12.0 Set Spending Limit -->
+      <div class="page" id="set-limit">
+        <div class="ph">
+          <div class="ph-title">[ Set/Update Weekly Spending Limit ]</div>
+        </div>
+        <div class="card">
+          <div class="fgrp">
+            <div class="lbl">[ Weekly Limit ]</div>
+            <input class="inp" type="number" placeholder="[ Enter limit ]">
+          </div>
+          <div class="info-msg">[ Current limit: $XX.XX ]<br>[ Projected savings: $X,XXX/year ]</div>
+          <div class="btn-grp">
+            <button class="btn filled" onclick="show('confirm-limit')">[ Save Limit ]</button>
+            <button class="btn" onclick="show('youth-dashboard')">[ Cancel ]</button>
+          </div>
+        </div>
+      </div>
+      <!-- 13.0 Confirm Limit -->
+      <div class="page" id="confirm-limit">
+        <div class="ok-wrap">
+          <div class="ok-ring">✓</div>
+          <div>[ Spending Limit Updated ]</div>
+          <div class="ln w60"></div>
+          <div>[ Youth notified ]</div>
+          <div class="btn-grp" style="margin-top:18px;">
+            <button class="btn filled" onclick="show('youth-dashboard')">[ Back to Dashboard ]</button>
+          </div>
+        </div>
+      </div>
+      <!-- 14.0 Limit Error -->
+      <div class="page" id="limit-error">
+        <div class="ph">
+          <div class="ph-title">[ Invalid Limit ]</div>
+        </div>
+        <div class="card">
+          <div class="err-msg">[ Error: Please enter a valid limit (e.g., $5 - $500). ]</div>
+          <div class="btn-grp">
+            <button class="btn" onclick="show('set-limit')">[ Fix Limit ]</button>
+          </div>
+        </div>
+      </div>
+      <!-- 15.0 View Activity -->
+      <div class="page" id="activity">
+        <div class="ph">
+          <div class="ph-title">[ Youth Spending Activity ]</div>
+        </div>
+        <div class="filter-row">
+          <button class="btn sm" onclick="show('activity-filter')">[ Filter ]</button>
+        </div>
+        <div class="card">
+          <div class="card-title">[ Recent Transactions ]</div>
+          <div class="wf-row"><div>[ Date ]</div><div>[ Merchant ]</div><div>[ Amount ]</div><div>[ Balance ]</div></div>
+          <div class="wf-row"><div>[ 04/01/24 ]</div><div>[ Bookstore ]</div><div>[ -$14.00 ]</div><div>[ $86.00 ]</div></div>
+          <div class="wf-row"><div>[ 03/31/24 ]</div><div>[ Grocery ]</div><div>[ -$8.50 ]</div><div>[ $100.00 ]</div></div>
+        </div>
+      </div>
+      <!-- 16.0 Filter Activity -->
+      <div class="page" id="activity-filter">
+        <div class="ph">
+          <div class="ph-title">[ Filter Transactions ]</div>
+        </div>
+        <div class="card">
+          <div class="fgrp">
+            <div class="lbl">[ Date Range ]</div>
+            <input class="inp" type="text" placeholder="[ Select dates ]">
+          </div>
+          <div class="fgrp">
+            <div class="lbl">[ Merchant ]</div>
+            <input class="inp" type="text" placeholder="[ Enter merchant ]">
+          </div>
+          <div class="fgrp">
+            <div class="lbl">[ Amount Range ]</div>
+            <input class="inp" type="text" placeholder="[ $Min - $Max ]">
+          </div>
+          <div class="btn-grp">
+            <button class="btn filled" onclick="show('activity')">[ Apply Filter ]</button>
+            <button class="btn" onclick="show('activity')">[ Cancel ]</button>
+          </div>
+        </div>
+      </div>
+      <!-- 17.0 Notification -->
+      <div class="page" id="notification">
+        <div class="ph">
+          <div class="ph-title">[ Notification: Transaction Blocked ]</div>
+        </div>
+        <div class="card">
+          <div class="msg-bub">[ Youth attempted to spend $XX.XX at [Merchant] exceeding the weekly limit. ]</div>
+          <div class="btn-grp">
+            <button class="btn" onclick="show('youth-dashboard')">[ View Dashboard ]</button>
+            <button class="btn" onclick="show('activity')">[ View Activity ]</button>
+          </div>
+        </div>
+      </div>
+      <!-- 18.0 Concurrent Access (Conflict) -->
+      <div class="page" id="conflict">
+        <div class="ph">
+          <div class="ph-title">[ Concurrent Access Detected ]</div>
+        </div>
+        <div class="card">
+          <div class="err-msg">[ Parent and youth are both making changes. Please review recent updates and try again. ]</div>
+          <div class="info-msg">[ Real-time sync status shown here. ]</div>
+          <div class="btn-grp">
+            <button class="btn filled" onclick="show('youth-dashboard')">[ Back to Dashboard ]</button>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+<script>
+function show(id, el) {
+  document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
+  document.getElementById(id).classList.add('active');
+  document.querySelectorAll('.nav-link').forEach(n => n.classList.remove('active'));
+  if (el) el.classList.add('active');
+}
+</script>
+<!--
+Summary Table
+Step → Screen Name → File Reference → Navigates To
+1 → Login → #login → Main Dashboard (#dashboard)
+2 → Main Dashboard → #dashboard → Accounts Overview (#accounts), Youth Dashboard (#youth-dashboard)
+3 → Accounts Overview → #accounts → Select Youth Account (#select-youth), Add Account (#setup-prompt)
+4 → Select Youth Account → #select-youth → Youth Dashboard (#youth-dashboard)
+5 → Youth Dashboard → #youth-dashboard → Add Funds (#add-funds), Set Limit (#set-limit), View Activity (#activity)
+6 → Youth Account Setup → #setup-prompt → (Start Setup)
+7 → Add Funds → #add-funds → Confirm Transfer (#confirm-transfer), Error (#funds-error, #validation-error)
+8 → Confirm Transfer → #confirm-transfer → Success (#success-transfer)
+9 → Transfer Success → #success-transfer → Dashboard (#youth-dashboard), Add Funds (#add-funds)
+10 → Insufficient Funds → #funds-error → Add Funds (#add-funds)
+11 → Validation Error → #validation-error → Add Funds (#add-funds)
+12 → Set Spending Limit → #set-limit → Confirm Limit (#confirm-limit), Error (#limit-error)
+13 → Confirm Limit → #confirm-limit → Dashboard (#youth-dashboard)
+14 → Limit Error → #limit-error → Set Limit (#set-limit)
+15 → View Activity → #activity → Filter (#activity-filter)
+16 → Filter Activity → #activity-filter → Activity (#activity)
+17 → Notification → #notification → Dashboard (#youth-dashboard), Activity (#activity)
+18 → Concurrent Access → #conflict → Dashboard (#youth-dashboard)
+-->
+</body>
+</html>
